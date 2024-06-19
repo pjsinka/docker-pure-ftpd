@@ -28,7 +28,7 @@ then
     PURE_FTPD_FLAGS="$PURE_FTPD_FLAGS --tls=1 "
 fi
 
-# If TLS flag is set and cert and key are given are given as two files, merge them into one cert
+# If TLS flag is set and cert and key are given as two files, merge them into one cert
 if [ -e /etc/ssl/private/pure-ftpd-cert.pem ] && [ -e /etc/ssl/private/pure-ftpd-key.pem ] && [[ "$PURE_FTPD_FLAGS" == *"--tls"* ]]
 then
     echo "Merging certificate and key"
