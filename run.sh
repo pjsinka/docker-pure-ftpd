@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# build up flags passed to this file on run + env flag for additional flags
+# Build up flags passed to this file on run + env flag for additional flags
 # e.g. -e "ADDED_FLAGS=--tls=2"
 PURE_FTPD_FLAGS=" $@ $ADDED_FLAGS "
 
-# start rsyslog
+# Start rsyslog
 if [[ "$PURE_FTPD_FLAGS" == *" -d "* ]] || [[ "$PURE_FTPD_FLAGS" == *"--verboselog"* ]]
 then
     echo "Log enabled, see /var/log/messages"
@@ -21,7 +21,7 @@ then
     pure-pw mkdb /etc/pure-ftpd/pureftpd.pdb -f "$PASSWD_FILE"
 fi
 
-# detect if using TLS (from volumed in file) but no flag set, set one
+# Detect if using TLS (from volumed in file) but no flag set, set one
 if [ -e /etc/ssl/private/pure-ftpd.pem ] && [[ "$PURE_FTPD_FLAGS" != *"--tls"* ]] && [[ "$PURE_FTPD_FLAGS" != *"-Y"* ]]
 then
     echo "TLS Enabled"
@@ -57,7 +57,7 @@ if [ ! -z "$FTP_USER_NAME" ] && [ ! -z "$FTP_USER_PASS" ] && [ ! -z "$FTP_USER_H
 then
     echo "Creating user..."
 
-    # make sure the home folder exists
+    # Make sure the home folder exists
     mkdir -p "$FTP_USER_HOME"
 
     # Generate the file that will be used to inject in the password prompt stdin
@@ -83,7 +83,7 @@ $FTP_USER_PASS" > "$PWD_FILE"
     if [ ! -z "$FTP_USER_HOME_PERMISSION" ]
     then
         chmod "$FTP_USER_HOME_PERMISSION" "$FTP_USER_HOME"
-        echo " root user give $FTP_USER_NAME ftp user at $FTP_USER_HOME directory has $FTP_USER_HOME_PERMISSION permission"
+        echo "root user give $FTP_USER_NAME ftp user at $FTP_USER_HOME directory has $FTP_USER_HOME_PERMISSION permission"
     fi
 
     if [ ! -z "$FTP_USER_UID" ]
@@ -91,13 +91,13 @@ $FTP_USER_PASS" > "$PWD_FILE"
         if ! [[ $(ls -ldn $FTP_USER_HOME | awk '{print $3}') = $FTP_USER_UID ]]
         then
             chown $FTP_USER_UID "$FTP_USER_HOME"
-            echo " root user give $FTP_USER_HOME directory $FTP_USER_UID owner"
+            echo "root user give $FTP_USER_HOME directory $FTP_USER_UID owner"
         fi
     else
         if ! [[ $(ls -ld $FTP_USER_HOME | awk '{print $3}') = 'ftpuser' ]]
         then
             chown ftpuser "$FTP_USER_HOME"
-            echo " root user give $FTP_USER_HOME directory ftpuser owner"
+            echo "root user give $FTP_USER_HOME directory ftpuser owner"
         fi
     fi
 
@@ -143,9 +143,10 @@ then
     PURE_FTPD_FLAGS="$PURE_FTPD_FLAGS -C $FTP_MAX_CONNECTIONS"
 fi
 
-# let users know what flags we've ended with (useful for debug)
+# Let users know what flags we've ended with (useful for debug)
 echo "Starting Pure-FTPd:"
 echo "  pure-ftpd $PURE_FTPD_FLAGS"
 
-# start pureftpd with requested flags
+# Start pureftpd with requested flags
 exec /usr/sbin/pure-ftpd $PURE_FTPD_FLAGS
+
