@@ -44,6 +44,7 @@ RUN apt-get -y update && \
     openbsd-inetd \
     openssl \
     perl \
+    libsodium23 \
     rsyslog
 
 COPY --from=builder /tmp/pure-ftpd/*.deb /tmp/pure-ftpd/

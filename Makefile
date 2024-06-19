@@ -7,7 +7,7 @@ test-tls: build run-tls logs-for-5 test-bob-tls
 # tail logs for a set number of seconds
 logs-for-%:
 	@echo "-----"
-	@echo "watching logs for next $* seconds"
+	@echo "Watching logs for next $* seconds"
 	@echo "-----"
 	-timeout -s9 $* sudo docker logs -f ftpd_server
 
@@ -15,13 +15,13 @@ build:
 	sudo docker build --rm -t pure-ftp-demo .
 
 run: kill
-	sudo docker run -d --name ftpd_server -p 21:21 -p 30000-30009:30000-30009 -e "PUBLICHOST=localhost" -e "ADDED_FLAGS=-d -d" pure-ftp-demo
+	sudo docker run -d --rm --name ftpd_server -p 21:21 -p 30000-30009:30000-30009 -e "PUBLICHOST=localhost" -e "ADDED_FLAGS=-d -d" pure-ftp-demo
 
 # runs with auto generated tls cert & creates test bob user
 run-tls: kill
 	-sudo docker volume rm ftp_tls
 	sudo docker volume create --name ftp_tls
-	sudo docker run -d --name ftpd_server -p 21:21 -p 30000-30009:30000-30009 -e "PUBLICHOST=localhost" -e "ADDED_FLAGS=-d -d --tls 2" -e "TLS_CN=localhost" -e "TLS_ORG=Demo" -e "TLS_C=UK" -e"TLS_USE_DSAPRAM=true" -e FTP_USER_NAME=bob -e FTP_USER_PASS=test -e FTP_USER_HOME=/home/ftpusers/bob -v ftp_tls:/etc/ssl/private/ pure-ftp-demo
+	sudo docker run -d --rm --name ftpd_server -p 21:21 -p 30000-30009:30000-30009 -e "PUBLICHOST=localhost" -e "ADDED_FLAGS=-d -d --tls 2" -e "TLS_CN=localhost" -e "TLS_ORG=Demo" -e "TLS_C=UK" -e "TLS_USE_DSAPRAM=true" -e FTP_USER_NAME=bob -e FTP_USER_PASS=test -e FTP_USER_HOME=/home/ftpusers/bob -v ftp_tls:/etc/ssl/private/ pure-ftp-demo
 
 kill:
 	-sudo docker kill ftpd_server
@@ -35,7 +35,7 @@ setup-bob:
 	sudo docker exec -it ftpd_server sh -c "(echo test; echo test) | pure-pw useradd bob -f /etc/pure-ftpd/passwd/pureftpd.passwd -m -u ftpuser -d /home/ftpusers/bob"
 	@echo "User bob setup with password: test"
 
-# simple test to list files, upload a file, download it to a new name, delete it via ftp and read the new local one to make sure it's in tact
+# simple test to list files, upload a file, download it to a new name, delete it via ftp and read the new local one to make sure it's intact
 test-bob:
 	echo "Test file was read successfully!" > test-orig-file.txt
 	echo "user bob test\n\
@@ -69,4 +69,5 @@ push:
 	git push --tags
 
 pull:
-	git pull
+	git pull --rebase
+
